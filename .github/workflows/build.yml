@@ -29,21 +29,21 @@ jobs:
           cd /tmp/insert_dylib && xcodebuild -configuration Release
           sudo cp build/Release/insert_dylib /usr/local/bin/ || sudo cp build/Release/insert_dylib /opt/homebrew/bin/ || true
 
-      - name: Set up Theos
+      - name: Set up Theos & iOS SDK
         run: |
           git clone --recursive https://github.com/theos/theos.git ${{ github.workspace }}/theos
-          curl -fsSL https://github.com/theos/sdks/archive/master.zip -o sdks.zip
-          unzip -q sdks.zip
           mkdir -p ${{ github.workspace }}/theos/sdks
-          cp -r sdks-master/*.sdk ${{ github.workspace }}/theos/sdks/ || true
-          rm -rf sdks-master sdks.zip
+          echo "Downloading official patched iPhoneOS 16.5 SDK..."
+          curl -fsSL https://github.com/theos/sdks/releases/download/master-146e41f/iPhoneOS16.5.sdk.tar.xz -o /tmp/iPhoneOS16.5.sdk.tar.xz
+          tar -xf /tmp/iPhoneOS16.5.sdk.tar.xz -C ${{ github.workspace }}/theos/sdks/
+          ls -la ${{ github.workspace }}/theos/sdks/
         env:
           THEOS: ${{ github.workspace }}/theos
 
       - name: Compile Tweak (.deb & .dylib)
         run: |
           export THEOS=${{ github.workspace }}/theos
-          export PATH=$THEOS/bin:$PATH
+          export PATH="/opt/homebrew/bin:/usr/local/bin:$THEOS/bin:$PATH"
           make clean
           make package FINALPACKAGE=1
         working-directory: ${{ github.workspace }}/BHTikTokPlusPlus
@@ -61,7 +61,7 @@ jobs:
         run: |
           git clone https://github.com/Al4ise/Azule /tmp/Azule
           chmod +x /tmp/Azule/azule
-          export PATH=/tmp/Azule:$PATH
+          export PATH="/opt/homebrew/bin:/usr/local/bin:/tmp/Azule:$PATH"
           IPA_LINK="${{ github.event.inputs.ipa_url }}"
           if [ -z "$IPA_LINK" ]; then
             IPA_LINK="https://github.com/khoald333/tiktok-ipa/releases/download/v40.2.1/TikTok-40.2.1.ipa"
