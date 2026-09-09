@@ -14,18 +14,29 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install System Dependencies
+        run: |
+          brew install dpkg ldid
+          git clone https://github.com/Tyilo/insert_dylib /tmp/insert_dylib
+          cd /tmp/insert_dylib && xcodebuild -configuration Release
+          sudo cp build/Release/insert_dylib /usr/local/bin/ || sudo cp build/Release/insert_dylib /opt/homebrew/bin/ || true
 
       - name: Set up Theos
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          git clone --recursive https://github.com/theos/theos.git ${{ github.workspace }}/theos
           curl -fsSL https://github.com/theos/sdks/archive/master.zip -o sdks.zip
           unzip -q sdks.zip
-          mv sdks-master/*.sdk $THEOS/sdks/ || true
+          mkdir -p ${{ github.workspace }}/theos/sdks
+          cp -r sdks-master/*.sdk ${{ github.workspace }}/theos/sdks/ || true
+          rm -rf sdks-master sdks.zip
         env:
           THEOS: ${{ github.workspace }}/theos
 
@@ -48,8 +59,8 @@ jobs:
 
       - name: Inject Tweak into TikTok IPA
         run: |
-          brew install ldid
           git clone https://github.com/Al4ise/Azule /tmp/Azule
+          chmod +x /tmp/Azule/azule
           export PATH=/tmp/Azule:$PATH
           IPA_LINK="${{ github.event.inputs.ipa_url }}"
           if [ -z "$IPA_LINK" ]; then
@@ -57,12 +68,15 @@ jobs:
           fi
           echo "Downloading base IPA from $IPA_LINK..."
           curl -L -o /tmp/TikTok_clean.ipa "$IPA_LINK"
-          DEB_FILE=$(ls BHTikTokPlusPlus/packages/*.deb | head -n 1)
+          DEB_FILE=$(ls ${{ github.workspace }}/BHTikTokPlusPlus/packages/*.deb | head -n 1)
+          echo "Found DEB: $DEB_FILE"
+          mkdir -p ${{ github.workspace }}/output
           echo "Injecting $DEB_FILE into TikTok IPA using Azule..."
-          azule -i /tmp/TikTok_clean.ipa -o ${{ github.workspace }}/TikTok_You_4.2.ipa -f "$DEB_FILE"
+          /tmp/Azule/azule -i /tmp/TikTok_clean.ipa -o ${{ github.workspace }}/output -n TikTok_You_4.2 -f "$DEB_FILE" -u -U -v
+          ls -la ${{ github.workspace }}/output/
 
       - name: Upload Injected TikTok You IPA
         uses: actions/upload-artifact@v4
         with:
           name: TikTok-You-iOS-IPA
-          path: ${{ github.workspace }}/TikTok_You_4.2.ipa
+          path: ${{ github.workspace }}/output/*.ipa

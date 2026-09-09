@@ -1,4 +1,4 @@
-ARCHS = arm64 arm64e
+ARCHS = arm64
 TARGET := iphone:clang:latest:14.0
 INSTALL_TARGET_PROCESSES = TikTok
 THEOS_DEVICE_IP = 192.168.100.246
