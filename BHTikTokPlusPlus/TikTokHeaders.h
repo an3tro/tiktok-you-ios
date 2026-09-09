@@ -27,12 +27,6 @@
 - (UIView *)view;
 @end
 
-@interface AWEAwemeModel: NSObject
-- (BOOL)isAd;
-- (BOOL)isAds;
-- (NSInteger)adLinkType;
-@end
-
 
 @interface BDImageView: UIImageView
 - (void)handleLongPress:(UILongPressGestureRecognizer *)sender;
@@ -151,6 +145,8 @@
 + (id)rawModelFromLiveRoomModel:(id)arg1;
 + (id)aweLiveRoom_subModelPropertyKey;
 - (void)live_callInitWithDictyCategoryMethod:(id)arg1;
+- (BOOL)isAd;
+- (NSInteger)adLinkType;
 @end
 
 @interface AWEUserWorkCollectionViewCell: UICollectionView

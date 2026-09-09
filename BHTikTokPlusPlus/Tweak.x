@@ -2,11 +2,7 @@
 
 NSArray *jailbreakPaths;
 
-static void showConfirmation(void (^okHandler)(void)) {
-  [%c(AWEUIAlertView) showAlertWithTitle:@"BHTikTok, Hi" description:@"Are you sure?" image:nil actionButtonTitle:@"Yes" cancelButtonTitle:@"No" actionBlock:^{
-    okHandler();
-  } cancelBlock:nil];
-}
+
 
 @interface BHTStreakBannerView : UIView
 @property (nonatomic, strong) UILabel *titleLabel;
@@ -1134,28 +1130,14 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 }
 %end
 
-%hook UIButton // follow confirmation broken 
+%hook UIButton
 - (void)_onTouchUpInside {
-    if ([BHIManager followConfirmation] && [self.currentTitle isEqualToString:@"Follow"]) {
-        void (^confirmBlock)(void) = ^{
-            %orig;
-        };
-        showConfirmation(confirmBlock);
-    } else {
-        %orig;
-    }
+    %orig;
 }
 %end
 %hook AWEPlayInteractionUserAvatarElement
 - (void)onFollowViewClicked:(id)sender {
-    if ([BHIManager followConfirmation]) {
-        void (^confirmBlock)(void) = ^{
-            %orig;
-        };
-        showConfirmation(confirmBlock);
-    } else {
-        %orig;
-    }
+    %orig;
 }
 %end
 
@@ -1222,29 +1204,17 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 
 %end
 
-%hook AWEFeedVideoButton // like feed confirmation
+%hook AWEFeedVideoButton
 - (void)_onTouchUpInside {
-    if ([BHIManager likeConfirmation] && [self.imageNameString isEqualToString:@"ic_like_fill_1_new"]) {
-        showConfirmation(^(void) { %orig; });
-    } else {
-        %orig;
-    }
+    %orig;
 }
 %end
 %hook AWECommentPanelCell // like/dislike comment confirmation & copy text
 - (void)onLikeAction:(id)arg1 {
-    if ([BHIManager likeCommentConfirmation]) {
-        showConfirmation(^(void) { %orig; });
-    } else {
-        return %orig;
-    }
+    %orig;
 }
 - (void)onDislikeAction:(id)arg1 {
-    if ([BHIManager dislikeCommentConfirmation]) {
-        showConfirmation(^(void) { %orig; });
-    } else {
-        return %orig;
-    }
+    %orig;
 }
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     id orig = %orig;
