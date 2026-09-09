@@ -1,0 +1,9 @@
+Package: com.shiawasez.tiktokyou
+Name: TikTok You (iOS)
+Version: 46.8.3-4.2
+Architecture: iphoneos-arm
+Description: TikTok You Mod (iOS) - Full port based on latest TikTok 46.8.3. Supports iPhone 12 mini (A14/arm64e), Auto-Streak Renewer, Geo-Bypass, Watermark-free downloads, Pure Mode & Verified Badge.
+Maintainer: TikTok You Team
+Author: raul saeed
+Section: Tweaks
+Depends: mobilesubstrate
