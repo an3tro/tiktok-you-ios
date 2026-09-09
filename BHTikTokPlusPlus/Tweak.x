@@ -934,7 +934,9 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 - (void)viewDidLoad {
     %orig;
     if ([BHIManager antiBurnIn]) {
-        [(UIView *)[self view] setAlpha:0.40];
+        if ([(id)self respondsToSelector:@selector(view)]) {
+            [(UIView *)[(id)self view] setAlpha:0.40];
+        }
     }
 }
 %end
@@ -943,7 +945,7 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 - (id)initWithDictionary:(id)arg1 error:(id *)arg2 {
     id orig = %orig;
     if (!orig || ![BHIManager hideAds]) return orig;
-    if ([self isAds] || [self isAd]) return nil;
+    if ([(id)self isAds] || [(id)self isAd]) return nil;
     if ([arg1 isKindOfClass:[NSDictionary class]]) {
         NSDictionary *dict = (NSDictionary *)arg1;
         if ([dict[@"is_ads"] boolValue] || dict[@"raw_ad_data"] || dict[@"ad_link_type"]) {
@@ -955,7 +957,7 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 - (id)init {
     id orig = %orig;
     if (!orig || ![BHIManager hideAds]) return orig;
-    return ([self isAds] || [self isAd]) ? nil : orig;
+    return ([(id)self isAds] || [(id)self isAd]) ? nil : orig;
 }
 
 - (BOOL)isAd {
@@ -1135,7 +1137,10 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 %hook UIButton // follow confirmation broken 
 - (void)_onTouchUpInside {
     if ([BHIManager followConfirmation] && [self.currentTitle isEqualToString:@"Follow"]) {
-        showConfirmation(^(void) { %orig; });
+        void (^confirmBlock)(void) = ^{
+            %orig;
+        };
+        showConfirmation(confirmBlock);
     } else {
         %orig;
     }
@@ -1144,9 +1149,12 @@ static NSURL *bht_modifyTikTokURL(NSURL *originalURL) {
 %hook AWEPlayInteractionUserAvatarElement
 - (void)onFollowViewClicked:(id)sender {
     if ([BHIManager followConfirmation]) {
-        showConfirmation(^(void) { %orig; });
+        void (^confirmBlock)(void) = ^{
+            %orig;
+        };
+        showConfirmation(confirmBlock);
     } else {
-        return %orig;
+        %orig;
     }
 }
 %end

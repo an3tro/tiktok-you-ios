@@ -23,6 +23,16 @@
 @interface TTKProfileRootView: UIView
 @end
 
+@interface AWEPlayInteractionBaseElement: NSObject
+- (UIView *)view;
+@end
+
+@interface AWEAwemeModel: NSObject
+- (BOOL)isAd;
+- (BOOL)isAds;
+- (NSInteger)adLinkType;
+@end
+
 
 @interface BDImageView: UIImageView
 - (void)handleLongPress:(UILongPressGestureRecognizer *)sender;

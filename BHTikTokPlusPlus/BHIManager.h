@@ -29,7 +29,7 @@
 + (BOOL)videoUploadDate;
 + (BOOL)alwaysOpenSafari;
 + (BOOL)regionChangingEnabled;
-+ (NSNumber *)selectedRegion;
++ (NSDictionary *)selectedRegion;
 + (NSNumber *)selectedLiveAction;
 + (BOOL)liveActionEnabled;
 + (BOOL)speedEnabled;

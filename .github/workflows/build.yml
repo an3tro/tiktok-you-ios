@@ -42,6 +42,7 @@ jobs:
 
       - name: Compile Tweak (.deb & .dylib)
         run: |
+          set -o pipefail
           export THEOS=${{ github.workspace }}/theos
           export PATH="/opt/homebrew/bin:/usr/local/bin:$THEOS/bin:$PATH"
           make clean
