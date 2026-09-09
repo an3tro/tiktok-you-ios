@@ -45,16 +45,21 @@ jobs:
           export THEOS=${{ github.workspace }}/theos
           export PATH="/opt/homebrew/bin:/usr/local/bin:$THEOS/bin:$PATH"
           make clean
-          make package FINALPACKAGE=1 messages=yes
+          make package FINALPACKAGE=1 messages=yes 2>&1 | tee /tmp/make.log || {
+            echo "## ❌ Compile Error Log:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 /tmp/make.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 2
+          }
         working-directory: ${{ github.workspace }}/BHTikTokPlusPlus
 
-      - name: Upload Logs on Failure
-        if: failure()
+      - name: Upload Build Log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Build-Failure-Logs
-          path: |
-            BHTikTokPlusPlus/.theos/
+          name: Build-Log
+          path: /tmp/make.log
 
       - name: Upload .deb and .dylib Artifacts
         uses: actions/upload-artifact@v4
