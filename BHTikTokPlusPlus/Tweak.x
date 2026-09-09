@@ -126,6 +126,8 @@ static void showConfirmation(void (^okHandler)(void)) {
 }
 @end
 
+static BOOL isAuthenticationShowed = FALSE;
+
 %hook AppDelegate
 - (_Bool)application:(UIApplication *)application didFinishLaunchingWithOptions:(id)arg2 {
     %orig;
@@ -148,7 +150,6 @@ static void showConfirmation(void (^okHandler)(void)) {
     return true;
 }
 
-static BOOL isAuthenticationShowed = FALSE;
 - (void)applicationDidBecomeActive:(id)arg1 { // old app lock TODO: add face-id
   %orig;
 

@@ -9,6 +9,6 @@ TWEAK_NAME = BHTikTok
 
 BHTikTok_FILES = Tweak.x $(wildcard *.m JGProgressHUD/*.m Settings/*.m)
 BHTikTok_FRAMEWORKS = UIKit Foundation CoreGraphics Photos CoreServices SystemConfiguration SafariServices Security QuartzCore
-BHTikTok_CFLAGS = -fobjc-arc -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations -Wno-nullability-completeness -Wno-unused-function -Wno-incompatible-pointer-types
+BHTikTok_CFLAGS = -fobjc-arc -I. -IJGProgressHUD -ISettings -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations -Wno-nullability-completeness -Wno-unused-function -Wno-incompatible-pointer-types -Wno-arc-performSelector-leaks
 
 include $(THEOS_MAKE_PATH)/tweak.mk

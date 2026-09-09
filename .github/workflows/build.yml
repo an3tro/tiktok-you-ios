@@ -45,8 +45,16 @@ jobs:
           export THEOS=${{ github.workspace }}/theos
           export PATH="/opt/homebrew/bin:/usr/local/bin:$THEOS/bin:$PATH"
           make clean
-          make package FINALPACKAGE=1
+          make package FINALPACKAGE=1 messages=yes
         working-directory: ${{ github.workspace }}/BHTikTokPlusPlus
+
+      - name: Upload Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-Failure-Logs
+          path: |
+            BHTikTokPlusPlus/.theos/
 
       - name: Upload .deb and .dylib Artifacts
         uses: actions/upload-artifact@v4
